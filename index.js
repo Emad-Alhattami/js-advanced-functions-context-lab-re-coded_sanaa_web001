@@ -1,6 +1,4 @@
-
-
-  function createEmployeeRecord (arraySt){
+function createEmployeeRecord (arraySt){
 
     return {
      firstName : arraySt[0],
