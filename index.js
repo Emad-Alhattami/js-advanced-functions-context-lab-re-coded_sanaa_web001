@@ -1,7 +1,7 @@
 
 
   function createEmployeeRecord (arraySt){
-    
+
     return {
      firstName : arraySt[0],
      familyName: arraySt[1],
