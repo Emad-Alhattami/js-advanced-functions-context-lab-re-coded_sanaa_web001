@@ -1,84 +1,74 @@
-/* Your Code Here */
-function createEmployeeRecord(elements) {
+
+
+  function createEmployeeRecord (arraySt){
+    
     return {
-        firstName: elements[0],
-        familyName: elements[1],
-        title: elements[2],
-        payPerHour: elements[3],
-        timeInEvents: [],
-        timeOutEvents: []
-    };
+     firstName : arraySt[0],
+     familyName: arraySt[1],
+     title: arraySt[2],
+     payPerHour: arraySt[3],
+     timeInEvents : [],
+     timeOutEvents:[]
+ }
+}
+function createEmployeeRecords (arraySt){
+  return arraySt.map (x => createEmployeeRecord(x));
 }
 
-function createEmployeeRecords(records) {
-    return records.map(function (record) {
-        return createEmployeeRecord(record);
-    });
+function createTimeInEvent (date){
+  let arrDa = date.split(" ") ;
+  let ob = {
+    type:"TimeIn" ,
+    hour: parseInt(arrDa[1]),
+    date:arrDa[0]
+  };
+  this.timeInEvents.push(ob);
+  return this;
 }
 
-function createTimeInEvent(employee,dateTime) {
-    let [date, hour] = dateTime.split(' ');
-
-    employee.timeInEvents.push({
-        type: "TimeIn",
-        hour: parseInt(hour, 10),
-        date
-    });
-    return employee;
+function createTimeOutEvent ( date){
+  let arrDa = date.split(" ") ;
+  let ob = {
+    type:"TimeOut" ,
+    hour: parseInt(arrDa[1]),
+    date:arrDa[0]
+  };
+  this.timeOutEvents.push(ob);
+  return this;
 }
 
-function createTimeOutEvent(employee,dateTime) {
-    let [date, hour] = dateTime.split(' ');
-
-    employee.timeOutEvents.push({
-        type: "TimeOut",
-        hour: parseInt(hour, 10),
-        date
-    });
-    return employee;
+function hoursWorkedOnDate (date){
+  let arrDa = date.split(" ") ;
+  for (let i = 0 ; i < this.timeInEvents.length ;i++ ) {
+    if(arrDa[0] === this.timeInEvents[i].date){
+      return (this.timeOutEvents[i].hour - this.timeInEvents[i].hour )/ 100;
+    }
+  }
 }
 
-function hoursWorkedOnDate(employee,dateMatched) {
-    let inEvent = employee.timeInEvents.find(function (e) {
-        return e.date === dateMatched;
-    });
-    let outEvent = employee.timeOutEvents.find(function (e) {
-        return e.date === dateMatched;
-    });
-    return (outEvent.hour - inEvent.hour) / 100;
+function wagesEarnedOnDate (date){
+  return hoursWorkedOnDate.call(this,date) * this.payPerHour ;
 }
 
-function wagesEarnedOnDate(employee,matchedDate) {
-    let wageOnDate = hoursWorkedOnDate(employee, matchedDate) * employee.payPerHour;
-    return parseFloat(wageOnDate.toString());
+function allWagesFor (){
+  let hour = 0;
+  for (let i = 0 ; i < this.timeInEvents.length ; i++ ) {
+    hour += wagesEarnedOnDate.call(this ,this.timeInEvents[i].date);
+  }
+  return hour  ;
 }
 
-function calculatePayroll(employeesRecords) {
-    return employeesRecords.reduce(function (memo, rec) {
-        return memo + allWagesFor(rec);
-    }, 0);
+function findEmployeeByFirstName (srcArray,firstName ){
+  let s= srcArray.find((x) => x.firstName === firstName);
+  return s;
 }
 
-function findEmployeeByFirstName(collection, firstNameString){
-    return collection.find(function(record){
-        return record.firstName === firstNameString;
-});
+function calculatePayroll (srcArray ){
+  let sum = 0 ;
+  for (let i = 0 ; i < srcArray.length ; i++ ) {
+    for (let j = 0 ; j < srcArray[i].timeInEvents.length ; j++ ){
+      sum += wagesEarnedOnDate.call(srcArray[i],srcArray[i].timeInEvents[j].date) ;
+    }
+  }
+  return sum ;
 }
-
-function allWagesFor(employee) {
-    let eligibleDates = employee.timeInEvents.map(function (e) {
-        return e.date;
-    })
-
-    let payable = eligibleDates.reduce(function (memo, d) {
-        return memo + wagesEarnedOnDate(employee, d)
-    }.bind(employee), 0)
-
-    return payable;
-}
-
-cRecord = createEmployeeRecord(["Julius", "Caesar", "General", 27]);
-updatedBpRecord = createTimeInEvent(cRecord, "0044-03-15 0900")
-updatedBpRecord = createTimeOutEvent(cRecord, "0044-03-15 1100")
-var x=wagesEarnedOnDate(cRecord, "0044-03-15")
-console.log(x);
